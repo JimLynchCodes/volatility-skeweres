@@ -1,0 +1,435 @@
+<div class="content" role="main">
+
+  <!-- Portfolio Value -->
+
+  <div class="card border border-primary rounded flex-grow-1 h-auto text-dark flex-column m-4">
+    <div class="card-body p-x1 py-1 mt-1 d-flex flex flex-grow-1 flex-row justify-content-end text-center">
+
+      <div *ngIf="gotTdData !== false" class="d-flex flex-row w-100 justify-content-around pt-2">
+
+        <h5 class="card-title" tooltip="Portfolio Total Value" style="font-size: calc(3px + 2vw);">
+          💰<br />{{portfolioTotalValue | moneyWithCommas}}</h5>
+        <h5 tooltip="Cash Balance" class="card-title" style="font-size: calc(3px + 2vw);">
+          💵<br />{{portfolioTotalCash | moneyWithCommas}}</h5>
+        <h5 tooltip="Long Assets Value" class="card-title" style="font-size: calc(3px + 2vw);">
+          🐂<br />{{portfolioLongAssetsValue | moneyWithCommas}}</h5>
+        <h5 tooltip="Long Options Value" class="card-title" style="font-size: calc(3px + 2vw);">
+          📞<br />{{portfolioLongOptionsValue | moneyWithCommas}}</h5>
+        <h5 tooltip="Short Options Value" class="card-title" style="font-size: calc(3px + 2vw);">
+          🩳<br />{{portfolioShortOptionsValue | moneyWithCommas}}</h5>
+
+      </div>
+    </div>
+
+    <p class="text-center my-4" *ngIf="gotTdData === false">
+      <i>Connect through TD to view your account info!</i>
+    </p>
+  </div>
+
+  <!-- Cash Accounts Section -->
+  <div class="container-fluid row m-1 my-2 border border-primary rounded">
+
+    <div class="col-12 p-2">
+
+      <h2 class="text-center pb-2">Cash Holdings</h2>
+
+      <div *ngFor="let cashPosition of currentCashPositions; index as i;"
+        class="m-1 my-2 p-2 border border-primary rounded flex-row d-flex">
+
+        <div class="px-2 flex-grow-1 d-flex align-items-center">{{i+1}})
+          {{cashPosition.instrument.symbol}}: ${{cashPosition.marketValue | moneyWithCommas}}
+        </div>
+
+      </div>
+
+      <p *ngIf="!gotTdData" class="text-center my-4">
+        <i>Connect through TD to view your cash accounts!</i>
+      </p>
+    </div>
+  </div>
+
+  <!-- Positions Section -->
+  <div class="container-fluid row m-1 my-2 border border-primary rounded">
+
+    <div class="col-12 p-2">
+
+      <h2 class="text-center pb-2">Current Positions</h2>
+
+      <h4 class="text-center pb-2"><i>Equities</i></h4>
+
+      <p *ngIf="!gotTdData" class="text-center my-4">
+        <i>Connect through TD to view your equity holdings!</i>
+      </p>
+
+      <div *ngFor="let equityPosition of currentEquityPositions; index as i;"
+        class="m-1 my-2 p-2 border border-primary rounded flex-row d-flex">
+
+        <div class="px-2 flex-grow-1 d-flex align-items-center">{{i+1}})
+
+          {{equityPosition.longQuantity}} shares of {{equityPosition.instrument.symbol}}:
+          ${{equityPosition.marketValue | moneyWithCommas}}
+        </div>
+
+
+        <div class="p-2 border border-primary rounded">
+
+          <span>
+            🔒 &nbsp; 0 / 24 &nbsp;
+          </span>
+          <button (click)="enableGainsLockerOnPositionClick(equityPosition, index)">
+            ✎
+          </button>
+        </div>
+      </div>
+
+      <br />
+
+      <h4 class="text-center pb-2"><i>Options</i></h4>
+
+      <p *ngIf="!gotTdData" class="text-center my-4">
+        <i>Connect through TD to view your option holdings!</i>
+      </p>
+
+      <div *ngFor="let optionPosition of currentOptionPositions; index as i;"
+        class="m-1 my-2 p-2 border border-primary rounded flex-row d-flex">
+
+        <div class="px-2 flex-grow-1 d-flex align-items-center">{{i+1}})
+          {{optionPosition.longQuantity}} shares of {{optionPosition.instrument.symbol}}:
+          ${{optionPosition.marketValue | moneyWithCommas}}
+        </div>
+
+
+        <div class="p-2 border border-primary rounded">
+
+          <span>
+            🔒 &nbsp; 0 / 24 &nbsp;
+          </span>
+          <button (click)="enableGainsLockerOnPositionClick(optionPosition, index)">
+            ✎
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Active Orders sections -->
+
+
+
+
+  <!-- <div class="container-fluid row m-1 my-2 border border-primary rounded p-2 flex-grow-1">
+
+    <h2 class="text-center mb-2 mt-4 pt-2">Open Orders</h2>
+
+    <div class="row flex justify-content-around">
+
+      <div class="flex-grow-1">
+
+        <h3 class="text-center py-1"><u>BUY</u></h3>
+
+        <div *ngFor="let order of currentOrders; index as i;" class="m-1 my-2 p-2 border border-primary rounded">
+
+          <span class="px-2">{{i+1}})</span>
+
+          <ng-container *ngIf="order.orderLegCollection[0].instruction === 'BUY'">
+            {{order.quantity}} shares of {{order.orderLegCollection[0].instrument.symbol}} @ ${{order.price}} each.
+          </ng-container>
+
+        </div>
+
+      </div>
+
+      <div class="flex-grow-1">
+
+        <h3 class="text-center py-1"><u>SELL</u></h3>
+
+        <div *ngFor="let order of currentOrders; index as i;" class="m-1 my-2 border border-primary rounded">
+
+          <div class="p-1" *ngIf="order.orderLegCollection[0].instruction === 'SELL'">
+
+            <span class="px-2">{{i+1}})</span>
+            {{order.quantity}} shares of {{order.orderLegCollection[0].instrument.symbol}} @ ${{order.price}} each.
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div> -->
+
+  <div class="flex p-1 my-2 border border-primary rounded w-100">
+
+    <h2 class="text-center mb-2 mt-4 pt-2">Open Orders</h2>
+
+    <p *ngIf="!gotTdData" class="text-center my-4">
+      <i>Connect through TD to view your current open orders!</i>
+    </p>
+
+    <div class="d-flex flex-row justify-content-around">
+
+      <div class="d-flex flex-column flex-grow-1 align-items-center" style="max-width: 50%">
+
+        <h3 class="text-center py-1"><u>BUY</u></h3>
+
+        <div *ngFor="let order of openBuyOrders" class="w-100">
+          <!-- Hi {{order | json}} -->
+          <app-open-order-item [order]="order" (cancelClickedEvent)="cancelOrderClick(order)"></app-open-order-item>
+        </div>
+
+        <!-- <div *ngFor="let order of openBuyOrders; let i = index;"
+          class="m-1 my-2 p-2 border order-white text-white rounded" 
+          [ngClass]="{'bg-primary': order.status !== 'REJECTED' && order.status !== 'CANCELED',
+                      'bg-secondary': order.status === 'REJECTED' || order.status === 'CANCELED'
+                     }"
+          style="min-width: 85%;">
+
+          
+          <ng-container *ngIf="order.orderLegCollection[0].instruction === 'BUY'">
+            <div class="flex-grow-1 row justify-content-between px-3 pt-2">
+              <div>
+                <span class="px-2">{{i+1}})</span>
+                {{order.quantity}} shares of {{order.orderLegCollection[0].instrument.symbol}} @ ${{order.price}} each.
+              </div>
+
+              <button type="button" class="btn btn-success btn-sm" tooltip=""
+                *ngIf="order.status !== 'REJECTED' && order.status !== 'CANCELED'"
+                (click)="cancelOrderClick(order, i)">
+                x
+              </button>
+            </div>
+
+            <div class="p-1 m-1 flex-grow-1">
+
+              {{order.status}} {{order.statusDescription ? '- ' : ''}} {{order.statusDescription}}
+
+            </div>
+
+            <ul>
+              <div *ngFor="let reason of order.reasons">
+                <li>
+                  {{reason.text}}
+                </li>
+              </div>
+            </ul>
+
+
+          </ng-container>
+
+        </div> -->
+
+        <!-- {{openBuyOrders | json}} -->
+
+        <div class="pt-2 text-center" *ngIf="openBuyOrders.length === 0">
+          <br />
+          <i>You have no open buy orders right now!</i>
+          <br />
+          <br />
+          <i>Why not try placing some of the suggested trades?</i>&nbsp;😉
+        </div>
+
+      </div>
+
+      <!-- Orders -->
+      <div class="d-flex flex-column flex-grow-1 align-items-center">
+
+        <h3 class="text-center py-1"><u>SELL</u></h3>
+
+        <!-- <div *ngFor="let order of suggestedSellOrders; index as i;"
+          class="m-1 my-2 p-2 border order-white bg-primary text-white rounded" style="min-width: 85%;">
+
+          <div class="p-1" *ngIf="order.orderLegCollection[0].instruction === 'SELL'">
+
+            <span class="px-2">{{i+1}})</span>
+            {{order.quantity}} shares of {{order.orderLegCollection[0].instrument.symbol}} @ ${{order.price}} each.
+          </div>
+
+        </div> -->
+
+        <ng-container *ngFor="let order of openSellOrders; let i = index;" style="min-width: 85%;">
+          <div *ngIf="order.orderLegCollection[0].instruction === 'SELL'"
+            class="m-1 my-2 p-2 border order-white bg-primary text-white rounded">
+            <div class="flex-grow-1 row justify-content-between px-3 pt-2">
+              <div>
+                <span class="px-2">{{i+1}})</span>
+                {{order.quantity}} shares of {{order.orderLegCollection[0].instrument.symbol}} @ ${{order.price}} each.
+              </div>
+
+              <button type="button" class="btn btn-success btn-sm" tooltip="" (click)="cancelOrderClick(order, i)">
+                x
+              </button>
+            </div>
+
+            <ul>
+              <div *ngFor="let reason of order.reasons">
+                <li>
+                  {{reason.text}}
+                </li>
+              </div>
+            </ul>
+          </div>
+        </ng-container>
+
+        <div class="pt-2 text-center" *ngIf="openSellOrders.length === 0">
+          <br />
+          <i>You have no open sell orders right now!</i>
+          <br />
+          <br />
+          <i>Why not try enabling GainsLocker on some of your positions? 😉</i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Suggested Trades sections -->
+
+  <div class="flex p-1 my-2 border border-primary rounded w-100">
+
+    <h2 class="text-center mb-2 mt-4 pt-2">Trade Suggestions</h2>
+
+    <p *ngIf="!gotTdData" class="text-center my-4">
+      <i>Connect through TD to place trades!</i>
+    </p>
+
+    <!-- Bot Autonomy -->
+    <div class=" p-2 m-1 border border-primary rounded">
+      <h5 class="card-text pl-2">Bot Autonomy</h5>
+      <p class="pl-2">
+        Should this bot place trades on its own or make suggestions for your approval?
+      </p>
+
+      <div class="row d-flex pl-5">
+
+        <div class="form-check p-2 flex-grow-1">
+          <input type="radio" class="form-check-input" id="botAutonomyRequireApproval" name="botAutonomyRadio"
+            checked>
+          <label class="form-check-label" for="botAutonomyRequireApprovalRadio">Require Approval</label>
+        </div>
+
+        <div class="form-check p-2 flex-grow-1">
+          <input type="radio" class="form-check-input" id="botAutonomyAutotrade" name="botAutonomyRadio">
+          <label class="form-check-label" for="botAutonomyAutotradeRadio">Autotrade</label>
+        </div>
+      </div>
+    </div>
+    
+
+     <!-- Enable / Disable Algorigthms -->
+     <div class=" p-2 m-1 border border-primary rounded">
+      <h5 class="card-text pl-2 my-2">Enable / Disable Algorigthms</h5>
+      <!-- <p class="pl-2">
+        Should this bot place trades on its own or make suggestions for your approval?
+      </p> -->
+
+      <div class="row d-flex pl-5">
+
+        <div class="form-check p-2 my-3 flex-grow-1 d-flex flex-row">
+          <input type="checkbox" class="form-check-input" id="morningVolumeSpikes" name="morningVolumeSpikes" checked>
+          <label class="form-check-label" for="morningVolumeSpikes" style="min-width: 24vw;"><i>Triple Gainers Hot Buys - </i></label>
+          
+          <p style="max-width: 70vw;">buys <i>"triple gainer"</i> stocks with analyst buy rating at least 80% and previous day volume over 20d average volume is at least 200%+</p>
+        </div>
+        
+        <div class="form-check p-2 flex-grow-1 d-flex flex-row">
+          <input type="checkbox" class="form-check-input" id="morningVolumeSpikes" name="morningVolumeSpikes" checked>
+          <label class="form-check-label" for="morningVolumeSpikes" style="min-width: 24vw;"><i>Inverse Head & Shoulders Scanner - </i></label>
+          
+          <p style="max-width: 70vw;">buys stocks that have just broken the neckline while in an "inverse head & shoulders formation". Alerts for stocks that have rounded out the second shoulder and are approaching the neckline.</p>
+        </div>
+
+        <div class="form-check p-2 flex-grow-1 d-flex flex-row">
+          <input type="checkbox" class="form-check-input" id="morningVolumeSpikes" name="morningVolumeSpikes" checked>
+          <label class="form-check-label" for="morningVolumeSpikes" style="min-width: 24vw;"><i>Classic Head & Shoulders Scanner - </i></label>
+          
+          <p style="max-width: 70vw;">scans stocks you already own for the heade & shoulders pattern. Sells positions that have just broken the neckline while in a "head & shoulders formation". Alerts for stocks that have rounded out the second shoulder and are approaching the neckline.</p>
+        </div>
+
+
+
+      </div>
+    </div>
+
+
+    <div class="d-flex flex-row justify-content-around">
+      
+      <!-- Suggested Buy Orders -->
+      <div class="d-flex flex-column flex-grow-1 align-items-center w-50">
+
+        <h3 class="text-center py-1"><u>BUY</u></h3>
+
+        <div *ngFor="let order of suggestedBuyOrders; let i = index;"
+          class="m-1 my-2 p-2 border order-white bg-primary text-white rounded" style="min-width: 85%;">
+
+          <div *ngIf="order.orderLegCollection[0].instruction === 'BUY'">
+            {{order.quantity}} shares of {{order.orderLegCollection[0].instrument.symbol}} @ ${{order.price}} each.
+
+            <ul>
+              <div *ngFor="let reason of order.reasons">
+                <li>
+                  {{reason.text}}
+                </li>
+              </div>
+            </ul>
+
+            <div class="flex-grow-1 row justify-content-around">
+              <button type="button" class="btn btn-success btn-sm" tooltip=""
+                (click)="placeTradeSuggestionClick(order, i)">
+                Place Trade
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" tooltip=""
+                (click)="dismissTradeSuggestionClick(order, i)">
+                Dismiss
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Suggested Sell Orders -->
+      <div class="d-flex flex-column flex-grow-1 align-items-center w-50">
+
+        <h3 class="text-center py-1"><u>SELL</u></h3>
+
+        <div *ngFor="let order of suggestedSellOrders; index as i;"
+          class="m-1 my-2 p-2 border order-white bg-primary text-white rounded" style="min-width: 85%;">
+
+          <div class="p-1" *ngIf="order.orderLegCollection[0].instruction === 'SELL'">
+
+            <span class="px-2">{{i+1}})</span>
+            {{order.quantity}} shares of {{order.orderLegCollection[0].instrument.symbol}} @ ${{order.price}} each.
+          </div>
+
+          <div class="flex-grow-1 row justify-content-around mt-3 mb-1">
+
+            <button type="button" class="btn btn-success btn-sm" tooltip=""
+              (click)="placeTradeSuggestionClick(order, i)">
+              Place Trade
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" tooltip=""
+              (click)="dismissTradeSuggestionClick(order, i)">
+              Dismiss
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+  </div>
+
+</div>

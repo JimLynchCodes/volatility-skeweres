@@ -1,0 +1,114 @@
+<div class="content" role="main">
+
+  <div class="card border border-primary rounded flex-grow-1 h-auto text-dark flex-column m-4 px-3 py-3">
+
+    <p>
+      The Strangulator 3000 finds the <i><strong>most directionally neutral straddles</strong></i> that have the <i><strong>highest theta decay
+      per dollar invested</strong></i>.
+    </p>
+    <br />
+
+    <h4>
+      Screened Tickers...
+    </h4>
+
+    <table class="table table-bordered border-primary" bordered="true">
+
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col" class="text-center text-wrap">Large Caps</th>
+          <th scope="col" class="text-center text-wrap">ETFs</th>
+          <th scope="col" class="text-center text-wrap">High V's</th>
+          <th scope="col" class="text-center text-wrap">Meme Stonks</th>
+          <th scope="col" class="text-center text-wrap">Best In Class</th>
+        </tr>
+      </thead>
+      <tbody class="text-center">
+        <ng-container *ngIf="rowsInTickerTable > 0">
+          <ng-container *ngFor="let rowIndex of arrayOfRowIndicies">
+            <tr scope="row">
+              
+              <ng-container *ngIf="largecapTickers.length > rowIndex">
+                <td>{{largecapTickers[rowIndex]}}</td>
+              </ng-container>
+
+              <ng-container *ngIf="etfTickers.length > rowIndex">
+                <td>{{etfTickers[rowIndex]}}</td>
+              </ng-container>
+
+              <ng-container *ngIf="memeStonkTickers.length > rowIndex">
+                <td>{{memeStonkTickers[rowIndex]}}</td>
+              </ng-container>
+
+              <ng-container *ngIf="bestInClassTickers.length > rowIndex">
+                <td>{{bestInClassTickers[rowIndex]}}</td>
+              </ng-container>
+
+            </tr>
+          </ng-container>
+        </ng-container>
+      </tbody>
+    </table>
+
+    <h4>
+      Top Strangles...
+    </h4>
+
+    <br />
+
+    <ng-container *ngFor="let strangulation of strangulations">
+
+      <ng-container *ngIf="strangulation.length > 0">
+        <h3>
+          <!-- ok... -->
+          <!-- {{strangulation[0] | json}} -->
+          {{strangulation[0].symbol}} &nbsp; &nbsp; 
+            last: ${{strangulation[0].underlyingLast}}
+        </h3>
+      </ng-container>
+
+      <br />
+
+      <table class="table table-bordered border-primary" bordered="true">
+
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col" class="text-center text-wrap">Expiration</th>
+            <th scope="col" class="text-center text-wrap">Call Strike</th>
+            <th scope="col" class="text-center text-wrap">Put Strike</th>
+            <th scope="col" class="text-center text-wrap">Net Delta</th>
+            <th scope="col" class="text-center text-wrap">Net Gamma</th>
+            <th scope="col" class="text-center text-wrap">Net Theta</th>
+            <th scope="col" class="text-center text-wrap">Estimated Buying Power Effect</th>
+            <th scope="col" class="text-center text-wrap">Theta Power</th>
+          </tr>
+        </thead>
+
+        <tbody class="text-center">
+
+          <ng-container *ngFor="let strangulationRow of strangulation">
+
+            <tr scope="row">
+              <td>{{strangulationRow.callExpiration}}</td>
+              <td>{{strangulationRow.callStrike}}</td>
+              <td>{{strangulationRow.putStrike}}</td>
+              <td>{{+strangulationRow.netDelta.toFixed(4)}}</td>
+              <td>{{strangulationRow.netGamma.toFixed(3)}}</td>
+              <td>{{strangulationRow.netTheta.toFixed(2)}}</td>
+              <td>{{strangulationRow.buyingPowerEffect.toFixed(2)}}</td>
+              <td>{{strangulationRow.thetaPower.toFixed(2)}}</td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+
+    </ng-container>
+
+  </div>
+
+  <br />
+  <br />
+  <br />
+  <br />
+
+</div>

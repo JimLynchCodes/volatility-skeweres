@@ -1,0 +1,46 @@
+<!-- Toolbar -->
+<div class="toolbar pr-4 bg-primary h-auto p-3" role="banner">
+
+  <img height="90" alt="Trade Buddy Logo" src="assets/grilled-steak-skewers.jpeg" />
+  <h4><i>Strangulator 3000</i></h4>
+  <div class="spacer"></div>
+
+  <span class="p-3">{{maskedConnectedAccountId}}</span>
+
+  <ng-container *ngIf="maskedConnectedAccountId === defaultNotConnectedToTdText">
+    <a
+      href="https://auth.tdameritrade.com/oauth?client_id=ESRWAJCTK8NS8D21HNVFXRA42L3XQSVZ%40AMER.OAUTHAP&response_type=code&redirect_uri=https%3A%2F%2Flocalhost%3A4200%2Flogin-callback&lang=en-us">
+      <button type="button" class="btn btn-success btn-sm"
+        tooltip="Uses a secure OAuth connected to link your account. Connection is killed when you close your browser window (and times out after 30 min).">
+        Connect TD Account
+      </button>
+    </a>
+  </ng-container>
+
+  <ng-container *ngIf="maskedConnectedAccountId !== defaultNotConnectedToTdText">
+
+    <button type="button" class="btn btn-success btn-sm" (click)="logoutClicked()">
+      Disconnect
+    </button>
+  </ng-container>
+
+</div>
+
+<!-- Footer -->
+<!-- <div class="mt-4 mb-3 text-center">
+  Volility Skewers
+</div> -->
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+<router-outlet></router-outlet>
+
+<!-- <app-footer-nav></app-footer-nav> -->
+
+<div class="position-fixed fixed-bottom">
+  <app-toasts-container></app-toasts-container>
+</div>

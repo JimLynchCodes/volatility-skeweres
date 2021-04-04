@@ -1,0 +1,39 @@
+<div class="modal-header">
+    <h4 class="modal-title pull-left">{{title}}</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+
+    <p>Clicking "Place Trade!" will place an order in your account to open this position.</p>
+
+    <p>
+        Asset: {{ position?.orderLegCollection[0].instrument.symbol }}
+        <!-- {{position | json}} -->
+    </p>
+
+    <p>
+        Shares to {{position?.orderLegCollection[0].instruction}} : {{ position.quantity }}
+    </p>
+
+    <p>
+        Current Price: ${{ position?.price }}
+    </p>
+
+    <hr class="text-dark"/>
+
+    <p>
+        Total: ${{ +position?.quantity * +position?.price}}
+    </p>
+
+    <!-- <p>
+        {{position.orderLegCollection[0].instruction}} 
+    </p> -->
+  
+    <div class="modal-footer">
+        <ng-container *ngIf="options.length">
+            <button *ngFor="let option of options" type="button" class="btn" 
+            (click)="respond(option)">{{option}}</button>
+        </ng-container>
+    </div>
