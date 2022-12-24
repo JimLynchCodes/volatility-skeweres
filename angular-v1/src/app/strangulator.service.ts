@@ -67,6 +67,12 @@ export class StrangulatorService {
 
               // console.log('currentCallStrike: ', currentCallStrike, ', currentPutStrike', strike)
 
+              const daysTilExpiration = +currentCallExpiration.slice(currentCallExpiration.indexOf(':')+1)
+              console.log('daysTilExpiration ', daysTilExpiration)
+
+              const maxDaysTilExpiration = 200;
+              const minDaysTilExpiration = 40;
+
               const currentPut = putOptionArr[0]
 
               if (+strike > +currentCallStrike) {
@@ -95,7 +101,9 @@ export class StrangulatorService {
                   // console.table(netGreeks);
 
                   if (netGreeks.delta > minAcceptableDelta && netGreeks.delta < maxAcceptableDelta &&
-                    netGreeks.gamma > minAcceptableGamma && netGreeks.gamma < maxAcceptableGamma) {
+                    netGreeks.gamma > minAcceptableGamma && netGreeks.gamma < maxAcceptableGamma &&
+                    daysTilExpiration > minDaysTilExpiration && daysTilExpiration < maxDaysTilExpiration
+                    ) {
 
                     const buyingPowerEffect = this.calculateBuyingPowerEffect(
                       underlyingLast,
@@ -134,6 +142,7 @@ export class StrangulatorService {
       })
 
     const gudOnesSorted = gudOnes.sort((a, b) => a.thetaPower > b.thetaPower ? 1 : -1)
+    // const gudOnesSorted = gudOnes.sort((a, b) => a.netTheta > b.netTheta ? 1 : -1)
     console.log(gudOnesSorted.length)
     console.log('done calculating!')
 

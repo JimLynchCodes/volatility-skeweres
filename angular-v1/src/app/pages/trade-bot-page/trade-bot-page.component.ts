@@ -110,9 +110,11 @@ export class TradeBotPageComponent {
 
   // largecapTickers = ['TSM', 'TSLA', 'BABA', 'WMT', 'DIS', 'BAC', 'NVDA', 'PYPL', 'INTC', 'NFLX', 'NKE', 'QCOM', 'UPS', 'BA', 'JD']
   largecapTickers = []
-  etfTickers = ['IWM', 'QQQ', 'EEM', 'EWZ', 'IWM', 'XLF', 'SQQQ', 'SLV', 'GDX', 'XLE']
-  memeStonkTickers = ['GME', 'AMC', 'MVIS', 'VIAC', 'RKT', 'AMD', 'MSFT', 'PLTR', 'TLRY', 'NIO', 'UBER', 'APHA', 'EBAY']
-  bestInClassTickers = ['GOOG', 'APPL', 'AMZN', 'FB', 'COST']
+  // etfTickers = ['IWM', 'QQQ', 'EEM', 'EWZ', 'IWM', 'XLF', 'SQQQ', 'SLV', 'GDX', 'XLE', 'SHY', 'VOO', 'VTI']
+  etfTickers = []
+  memeStonkTickers = ['GME', 'AMC', 'MVIS', 'VIAC', 'RKT', 'AMD', 'MSFT', 'PLTR', 'TLRY', 'NIO', 'UBER', 'APHA', 'EBAY', 'TSLA']
+  bestInClassTickers = ['GOOG', 'AAPL', 'AMZN', 'HD', 'WMT', 'MA', 'V', 'NKE', 'GOOGL', 'ATBI', 'VZ' ]
+  highIvs = ['SIVB', 'SJR', 'CHTR', 'COST', 'HD', 'WMT', 'V', 'ADBE', 'NKE', 'GOOGL', 'TROW', 'KMX', 'D', 'FDX', 'MRNA', 'GSK', 'VALE', 'EL', 'SHW' ]
 
   rowsInTickerTable = 0
   arrayOfRowIndicies = []
@@ -136,14 +138,16 @@ export class TradeBotPageComponent {
       ...this.largecapTickers,
       ...this.etfTickers,
       ...this.memeStonkTickers,
-      ...this.bestInClassTickers
+      ...this.bestInClassTickers,
+      ...this.highIvs
     ]
 
     this.rowsInTickerTable = Math.max(
       this.largecapTickers.length,
       this.etfTickers.length,
       this.memeStonkTickers.length,
-      this.bestInClassTickers.length
+      this.bestInClassTickers.length,
+      this.highIvs.length,
     );
 
     this.arrayOfRowIndicies = Array.from(Array(this.rowsInTickerTable).keys())
@@ -156,11 +160,11 @@ export class TradeBotPageComponent {
 
         const optionChain = await this.tdApiSvc.getOptionChainForSymbol(symbol);
 
-        const minAcceptableDelta = -0.002
-        const maxAcceptableDelta = 0.002
+        const minAcceptableDelta = -0.05
+        const maxAcceptableDelta = 0.04
 
-        const minAcceptableGamma = -0.01
-        const maxAcceptableGamma = 0.01
+        const minAcceptableGamma = -0.05
+        const maxAcceptableGamma = 0.05
 
         console.log('chainnnn: ', optionChain)
         console.log(optionChain)
@@ -170,7 +174,7 @@ export class TradeBotPageComponent {
             optionChain['callExpDateMap'],
             optionChain['putExpDateMap'],
             optionChain['underlying']['last'],
-            minAcceptableDelta,
+            minAcceptableDelta, 
             maxAcceptableDelta,
             minAcceptableGamma,
             maxAcceptableGamma
@@ -183,6 +187,7 @@ export class TradeBotPageComponent {
 
           this.strangulations = this.strangulations.sort((a, b) => {
             return a[0].thetaPower > b[0].thetaPower ? 1 : -1
+            // return a[0].netTheta > b[0].netTheta ? 1 : -1
           })
 
           // console.log('the gud ones are..... ', this.strangulations);
